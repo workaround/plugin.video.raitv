@@ -51,7 +51,7 @@ class RaiPlay:
     def getCategory(self, pathId):
         url = self.getUrl(pathId)
         response = json.load(urllib2.urlopen(url))
-        return response["blocchi"]
+        return response["contents"]
   
     # Raiplay Tipologia Item
     def getProgrammeList(self, pathId):
@@ -72,17 +72,30 @@ class RaiPlay:
     
     def getVideoMetadata(self, pathId):
         url = self.getUrl(pathId)
+        if url.endswith(".html"):
+            url = url.replace(".html",".json")
         response = json.load(urllib2.urlopen(url))
         return response["video"]
     
     def getUrl(self, pathId):
-        pathId = pathId.replace(" ", "%20")
-        if pathId[0:2] == "//":
-            url = "http:" + pathId
-        elif pathId[0] == "/":
-            url = self.baseUrl[:-1] + pathId
-        else:
-            url = pathId
+        url = pathId.replace(" ", "%20")
+        
+        if url.startswith("/raiplay/"):
+            url = url.replace("/raiplay/","https://raiplay.it/")
+        
+        if url[0:2] == "//":
+            url = "https:" + url
+        elif url[0] == "/":
+            url = self.baseUrl[:-1] + url
+        
+        # fix old format of url for json
+        if url.endswith(".html?json"):
+            url = url.replace(".html?json", ".json")
+        elif url.endswith("/?json"):
+            url = url.replace("/?json","/index.json")
+        elif url.endswith("?json"):
+            url = url.replace("?json",".json")
+        
         return url
         
     def getThumbnailUrl(self, pathId):
