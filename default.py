@@ -24,10 +24,6 @@ Addon = xbmcaddon.Addon(id=__plugin__)
 # plugin handle
 handle = int(sys.argv[1])
 
-# get channels
-tv_stations = RaiPlay().getChannels
-radio_stations = RaiPlayRadio().getChannels
-
 # utility functions
 def parameters_string_to_dict(parameters):
     ''' Convert parameters encoded in a URL to a dict. '''
@@ -160,6 +156,7 @@ def play(url, pathId="", srt=[]):
 
 def show_tv_channels():
     raiplay = RaiPlay()
+    tv_stations = raiplay.getChannels()
     for station in tv_stations:
         liStyle = xbmcgui.ListItem(station["channel"], thumbnailImage=raiplay.getThumbnailUrl(station["transparent-icon"]))
         liStyle.setInfo("video", {})
@@ -168,6 +165,8 @@ def show_tv_channels():
     xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
 
 def show_radio_stations():
+    raiplay = RaiPlayRadio()
+    radio_stations = raiplay.getChannels()
     for station in radio_stations:
         liStyle = xbmcgui.ListItem(station["channel"], thumbnailImage=station["stillFrame"])
         liStyle.setInfo("audio", {})
@@ -192,6 +191,7 @@ def show_replay_dates(media):
     
 def show_replay_tv_channels(date):
     raiplay = RaiPlay()
+    tv_stations = raiplay.getChannels()
     for station in tv_stations:
         liStyle = xbmcgui.ListItem(station["channel"], thumbnailImage=raiplay.getThumbnailUrl(station["transparent-icon"]))
         addDirectoryItem({"mode": "replay",
@@ -201,6 +201,8 @@ def show_replay_tv_channels(date):
     xbmcplugin.endOfDirectory(handle=handle, succeeded=True)
     
 def show_replay_radio_channels(date):
+    raiplay = RaiPlayRadio()
+    radio_stations = raiplay.getChannels()
     for station in radio_stations:
         liStyle = xbmcgui.ListItem(station["channel"], thumbnailImage=station["stillFrame"])
         addDirectoryItem({"mode": "replay",
